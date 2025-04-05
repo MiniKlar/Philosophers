@@ -8,6 +8,7 @@ RM = rm -f
 
 SRC = ./srcs/main.c \
 	./srcs/utils.c \
+	./srcs/utils_philo.c \
 
 OBJ = $(SRC:.c=.o)
 
@@ -32,6 +33,6 @@ clean:
 fclean: clean
 	$(RM) $(NAME)
 
-re: fclean LIB_C all
+re: fclean all
 
 .PHONY : all clean fclean re
