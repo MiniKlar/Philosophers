@@ -1,7 +1,7 @@
 NAME = philo
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -pthread -I ./includes -I ./LIB_C
+CFLAGS = -Wall -Wextra -Werror -g -pthread -I ./includes
 CLONE = git clone
 
 RM = rm -f
@@ -9,6 +9,8 @@ RM = rm -f
 SRC = ./srcs/main.c \
 	./srcs/utils.c \
 	./srcs/utils_philo.c \
+	./srcs/init.c \
+	./srcs/threads.c \
 
 OBJ = $(SRC:.c=.o)
 
