@@ -2,6 +2,8 @@ NAME = philo
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -pthread -I ./includes
+# -fsanitize=thread data race
+# -fsanitize=address leaks
 CLONE = git clone
 
 RM = rm -f
@@ -11,6 +13,7 @@ SRC = ./srcs/main.c \
 	./srcs/utils_philo.c \
 	./srcs/init.c \
 	./srcs/threads.c \
+	./srcs/parsing.c \
 
 OBJ = $(SRC:.c=.o)
 

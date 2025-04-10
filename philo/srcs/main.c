@@ -6,7 +6,7 @@
 /*   By: lomont <lomont@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 06:03:56 by lomont            #+#    #+#             */
-/*   Updated: 2025/04/09 00:32:06 by lomont           ###   ########.fr       */
+/*   Updated: 2025/04/11 01:02:55 by lomont           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,22 @@
 
 int	main(int argc, char **argv)
 {
-	t_philo data;
+	t_philo	data;
 
-	if (argc == 6)
+	if (argc == 5 || argc == 6)
 	{
+		check_parsing(argc, argv);
 		init_data(&data, argv);
 		ft_threads(&data);
+		pthread_mutex_destroy(&data.mutex->fork1);
+		pthread_mutex_destroy(&data.mutex->fork2);
+		free(data.mutex);
+		free(data.philo);
 	}
+	else if (argc < 5)
+		printf("Not enough arguments\n");
 	else
-		printf("c'est ok, tu es sorti\n");
-	free(data.mutex);
-	free(data.philo); //TODO free all threads
+		printf("Too much arguments\n");
 	return (0);
 }
+//TODO free all threads
