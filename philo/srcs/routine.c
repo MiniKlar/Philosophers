@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_philo.c                                      :+:      :+:    :+:   */
+/*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lomont <lomont@student.42.fr>              +#+  +:+       +#+        */
+/*   By: miniklar <miniklar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 02:19:41 by lomont            #+#    #+#             */
-/*   Updated: 2025/04/11 01:09:54 by lomont           ###   ########.fr       */
+/*   Updated: 2025/06/30 18:08:27 by miniklar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,16 @@ unsigned long long	get_time(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-void	*philo(void *arg)
+void	*routine(void *arg)
 {
-	t_thread			philo;
+	t_philo	philo;
 	unsigned long long	time;
 
-	philo = *(t_thread *) arg;
+	philo = *(t_philo *)arg;
+	(void)philo;
 	time = get_time();
-	sleep(philo.thread_num);
-	printf("TIME = %llu\n", time);
-	pthread_mutex_destroy(&philo.mutex->fork1);
-	pthread_mutex_destroy(&philo.mutex->fork2);
-	pthread_exit(NULL);
+	printf("Time = %lld\n", time);
+	sleep(3);
+	ft_putstr_fd("Ending\n", 1);
 	return (0);
 }

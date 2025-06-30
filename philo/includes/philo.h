@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lomont <lomont@student.42.fr>              +#+  +:+       +#+        */
+/*   By: miniklar <miniklar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 06:04:22 by lomont            #+#    #+#             */
-/*   Updated: 2025/04/11 01:28:50 by lomont           ###   ########.fr       */
+/*   Updated: 2025/06/30 18:21:48 by miniklar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,44 +18,39 @@
 # endif
 
 # include <sys/time.h>
+# include <string.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <pthread.h>
 # include <unistd.h>
 # include <stdbool.h>
-
-typedef struct s_fork
-{
-	pthread_mutex_t	fork1;
-	pthread_mutex_t	fork2;
-	long			time_to_die;
-	long			time_to_eat;
-	long			time_to_sleep;
-	long			count_eat_philo;
-}		t_fork;
-
-typedef struct s_thread
-{
-	t_fork		*mutex;
-	pthread_t	threads;
-	int			thread_num;
-}			t_thread;
+# include <errno.h>
 
 typedef struct s_philo
 {
-	t_thread	*philo;
-	t_fork		*mutex;
-	long		nb_philo;
-}			t_philo;
+	int	nb_philosophers;
+	int time_to_die;
+	int time_to_eat;
+	int time_to_sleep;
+	int nb_time_philo_needs_to_eat;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
+}				t_philo;
 
+void				*routine(void *arg);
+void				check_parsing(int argc, char **argv);
+void				init_philo(t_philo *philo, char **argv, int argc);
+void				ft_alloc_mutex(t_philo *philo);
+
+// Utils
+
+void				ft_putstr_fd(char *s, int fd);
 void				print_error(char *str);
 bool				ft_isdigit(int c);
 long				ft_atol(const char *str);
-unsigned long long	get_timeOD(void);
-void				*philo(void *arg);
-void				init_data(t_philo *data, char **argv);
-void				ft_threads(t_philo *data);
-void				check_parsing(int argc, char **argv);
+void				free_array(pthread_mutex_t **array);
+
+
 // t_gims ciel;
 // t_gims ferrari_vert;
 // t_GIMS DECOUVERT_MAUVAI_REVE;

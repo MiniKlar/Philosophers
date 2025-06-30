@@ -3,28 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lomont <lomont@student.42.fr>              +#+  +:+       +#+        */
+/*   By: miniklar <miniklar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 06:03:56 by lomont            #+#    #+#             */
-/*   Updated: 2025/04/11 01:02:55 by lomont           ###   ########.fr       */
+/*   Updated: 2025/06/27 16:19:44 by miniklar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+/*
+argv[1] = number of philosophers
+argv[2] = time to die
+argv[3] = time to eat
+argv[4] = time to sleep
+argv[5] = number of times each philosophers must eat
+*/
+
 int	main(int argc, char **argv)
 {
-	t_philo	data;
+	t_philo philo;
 
 	if (argc == 5 || argc == 6)
 	{
 		check_parsing(argc, argv);
-		init_data(&data, argv);
-		ft_threads(&data);
-		pthread_mutex_destroy(&data.mutex->fork1);
-		pthread_mutex_destroy(&data.mutex->fork2);
-		free(data.mutex);
-		free(data.philo);
+		init_philo(&philo, argv, argc);
+		ft_alloc_mutex(&philo);
 	}
 	else if (argc < 5)
 		printf("Not enough arguments\n");
@@ -32,4 +36,3 @@ int	main(int argc, char **argv)
 		printf("Too much arguments\n");
 	return (0);
 }
-//TODO free all threads

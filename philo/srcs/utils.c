@@ -3,20 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lomont <lomont@student.42.fr>              +#+  +:+       +#+        */
+/*   By: miniklar <miniklar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 02:11:58 by lomont            #+#    #+#             */
-/*   Updated: 2025/04/11 01:02:40 by lomont           ###   ########.fr       */
+/*   Updated: 2025/06/29 23:09:25 by miniklar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	ft_putstr_fd(char *s, int fd)
+void	free_array(pthread_mutex_t **array)
+{
+	int	i;
+
+	i = 0;
+	while (array[i] != 0)
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
+}
+
+void	ft_putstr_fd(char *s, int fd)
 {
 	while (*s)
 	{
-		write(fd, &*s, 1);
+		if (write(fd, &*s, 1) == -1)
+		{
+			perror("Write error");
+			exit(EXIT_FAILURE);
+		}
 		s++;
 	}
 }

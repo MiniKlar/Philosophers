@@ -3,23 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lomont <lomont@student.42.fr>              +#+  +:+       +#+        */
+/*   By: miniklar <miniklar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 19:37:15 by lomont            #+#    #+#             */
-/*   Updated: 2025/04/11 00:09:18 by lomont           ###   ########.fr       */
+/*   Updated: 2025/06/27 12:36:24 by miniklar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static bool	arg_isdigit(char *str)
+static bool	check_is_only_digit(char *str)
 {
 	int	i;
 
 	i = 0;
 	while (str[i])
 	{
-		if (!ft_isdigit(str[i]) && (str[i] != '+' && str[i] != '-'))
+		if (!ft_isdigit(str[i]) || (!ft_isdigit(str[i]) && str[0] != '+' && str[0] != '-'))
 			return (false);
 		i++;
 	}
@@ -35,16 +35,10 @@ void	check_parsing(int argc, char **argv)
 	while (i < argc)
 	{
 		n = ft_atol(argv[i]);
-		if (!arg_isdigit(argv[i]))
-		{
-			printf("One or more arguments are not only composed of digits\n");
-			exit(EXIT_FAILURE);
-		}
+		if (!check_is_only_digit(argv[i]))
+			print_error("One or more arguments are not only composed of digits\n");
 		if (n < 0 || n > INT_MAX)
-		{
-			printf("One or more arguments are not within 0 & INT_MAX\n");
-			exit(EXIT_FAILURE);
-		}
+			print_error("One or more arguments are not within 0 & INT_MAX\n");
 		i++;
 	}
 }
