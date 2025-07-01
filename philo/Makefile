@@ -1,6 +1,6 @@
 NAME = philo
 
-CC = cc
+CC = gcc
 CFLAGS = -Wall -Wextra -Werror -pthread -I ./includes
 # -fsanitize=thread data race
 # -fsanitize=address leaks
@@ -8,11 +8,12 @@ CFLAGS = -Wall -Wextra -Werror -pthread -I ./includes
 RM = rm -f
 
 SRC = ./srcs/main.c \
-	./srcs/init.c \
 	./srcs/utils.c \
 	./srcs/parsing.c \
 	./srcs/threads.c \
 	./srcs/routine.c \
+	./srcs/struct.c \
+	./srcs/free.c \
 
 OBJ = $(SRC:.c=.o)
 
