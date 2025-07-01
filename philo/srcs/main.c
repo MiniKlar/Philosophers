@@ -6,7 +6,7 @@
 /*   By: miniklar <miniklar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 06:03:56 by lomont            #+#    #+#             */
-/*   Updated: 2025/06/27 16:19:44 by miniklar         ###   ########.fr       */
+/*   Updated: 2025/07/01 15:05:28 by miniklar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,14 @@ argv[5] = number of times each philosophers must eat
 
 int	main(int argc, char **argv)
 {
-	t_philo philo;
+	t_philo *philo;
 
+	philo = NULL;
 	if (argc == 5 || argc == 6)
 	{
 		check_parsing(argc, argv);
-		init_philo(&philo, argv, argc);
-		ft_alloc_mutex(&philo);
+		philo = fill_philo(philo, argc, argv);
+		ft_alloc_mutex(philo);
 	}
 	else if (argc < 5)
 		printf("Not enough arguments\n");
