@@ -6,7 +6,7 @@
 /*   By: miniklar <miniklar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 19:37:15 by lomont            #+#    #+#             */
-/*   Updated: 2025/06/27 12:36:24 by miniklar         ###   ########.fr       */
+/*   Updated: 2025/07/02 02:27:12 by miniklar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static bool	check_is_only_digit(char *str)
 	return (true);
 }
 
-void	check_parsing(int argc, char **argv)
+bool	check_parsing(int argc, char **argv)
 {
 	int		i;
 	long	n;
@@ -36,9 +36,16 @@ void	check_parsing(int argc, char **argv)
 	{
 		n = ft_atol(argv[i]);
 		if (!check_is_only_digit(argv[i]))
-			print_error("One or more arguments are not only composed of digits\n");
+		{
+			ft_putstr_fd("One or more arguments are not only composed of digits\n", 2);
+			return (false);
+		}
 		if (n < 0 || n > INT_MAX)
-			print_error("One or more arguments are not within 0 & INT_MAX\n");
+		{
+			ft_putstr_fd("One or more arguments are not within 0 & INT_MAX\n", 2);
+			return (false);
+		}
 		i++;
 	}
+	return (true);
 }
