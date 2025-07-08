@@ -6,21 +6,53 @@
 /*   By: miniklar <miniklar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 15:02:38 by miniklar          #+#    #+#             */
-/*   Updated: 2025/07/01 15:15:50 by miniklar         ###   ########.fr       */
+/*   Updated: 2025/07/08 19:44:04 by miniklar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	free_all(t_philo *philo, pthread_t *threads)
+void	free_philo(t_dinner *dinner, t_philo *philo)
 {
-	t_philo *tmp;
+	t_philo	*tmp;
 
-	while (philo)
+	if (dinner)
 	{
-		tmp = philo;
-		philo = philo->next;
-		free(tmp);
+		pthread_mutex_destroy(dinner->m_print);
+		free(dinner->m_print);
+		free(dinner);
 	}
-	free(threads);
+	if (philo)
+	{
+		while (philo)
+		{
+			tmp = philo;
+			pthread_mutex_destroy(philo->die_time);
+			free(philo->die_time);
+			philo = philo->next;
+			free(tmp);
+		}
+	}
+}
+
+void	free_threads_fork(pthread_t *threads, pthread_mutex_t **fork)
+{
+	if (fork)
+		free_array_mutex(fork);
+	if (threads)
+		free(threads);
+}
+
+void	free_array_mutex(pthread_mutex_t **array)
+{
+	int	i;
+
+	i = 0;
+	while (array[i])
+	{
+		pthread_mutex_destroy(array[i]);
+		free(array[i]);
+		i++;
+	}
+	free(array);
 }
