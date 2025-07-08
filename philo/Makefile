@@ -1,7 +1,7 @@
 NAME = philo
 
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror -pthread -I ./includes
+CC = cc
+CFLAGS = -Wall -Wextra -Werror -g -pthread -I ./includes
 # -fsanitize=thread data race
 # -fsanitize=address leaks
 
@@ -14,6 +14,9 @@ SRC = ./srcs/main.c \
 	./srcs/routine.c \
 	./srcs/struct.c \
 	./srcs/free.c \
+	./srcs/monitoring.c \
+	./srcs/ft_lltoa.c \
+	./srcs/ft_itoa.c \
 
 OBJ = $(SRC:.c=.o)
 
