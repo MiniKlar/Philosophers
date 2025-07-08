@@ -6,78 +6,96 @@
 /*   By: miniklar <miniklar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 15:42:21 by miniklar          #+#    #+#             */
-/*   Updated: 2025/07/01 15:16:32 by miniklar         ###   ########.fr       */
+/*   Updated: 2025/07/08 19:19:58 by miniklar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	ft_threads(t_philo *philo, pthread_mutex_t **fork);
-
-void	ft_alloc_mutex(t_philo *philo)
+static bool	ft_alloc_mutex(t_dinner *dinner, pthread_mutex_t ***fork)
 {
-	int				i;
-	pthread_mutex_t **fork;
+	int	i;
 
 	i = 0;
-	fork = malloc(sizeof(pthread_mutex_t *) * philo->nb_philosophers);
-	if (!fork)
-		print_error("error fork malloc");
-	while (i < philo->nb_philosophers)
+	*fork = malloc(sizeof(pthread_mutex_t *) * (dinner->nb_philosophers + 1));
+	if (!(*fork))
+		return (ft_putstr_fd("error fork array malloc\n", 2), false);
+	while (i < dinner->nb_philosophers)
 	{
-		fork[i] = malloc(sizeof(pthread_mutex_t));
-		if (!fork[i])
-			print_error("error fork malloc");
-		pthread_mutex_init(fork[i], NULL);
-		printf("mutex allocated\n");
+		(*fork)[i] = malloc(sizeof(pthread_mutex_t));
+		if (!(*fork)[i])
+		{
+			free_array_mutex((*fork));
+			return (ft_putstr_fd("error fork malloc\n", 2), false);
+		}
+		pthread_mutex_init((*fork)[i], NULL);
 		i++;
 	}
-	ft_threads(philo, fork);
+	(*fork)[i] = NULL;
+	return (true);
 }
 
-void	give_fork(t_philo *philo, pthread_mutex_t **fork)
+void	give_fork(t_philo *philo, pthread_mutex_t **fork, int nb_philo)
 {
-	int		i;
-	t_philo *tmp;
+	int			i;
+	t_philo		*tmp;
 
 	tmp = philo;
 	i = 0;
-	while (i < tmp->nb_philosophers)
+	while (i < nb_philo)
 	{
 		tmp->left_fork = fork[i];
-		if (tmp->nb_philosophers > 1 && i == 0)
-			tmp->right_fork = fork[tmp->nb_philosophers - 1];
-		else if (tmp->nb_philosophers && i == tmp->nb_philosophers - 1)
-			tmp->right_fork = fork[0];
-		else if (tmp->nb_philosophers == 1)
+		if (nb_philo > 1 && i == 0)
+			tmp->right_fork = fork[nb_philo - 1];
+		else if (nb_philo == 1)
 			tmp->right_fork = fork[0];
 		else
-			tmp->right_fork = fork[i + 1];
-		i++;
+			tmp->right_fork = fork[i - 1];
 		if (tmp->next)
 			tmp = tmp->next;
+		i++;
 	}
+}
+
+static bool	create_monitor_thread(pthread_t *monitor, t_philo *philo)
+{
+	if (pthread_create(monitor, NULL, &monitoring, (void *)philo) != 0)
+	{
+		perror("pthread creation error");
+		return (false);
+	}
+	return (true);
 }
 
 int	create_thread(t_philo *philo, pthread_t *threads)
 {
 	int	i;
+	t_philo *tmp;
 
 	i = 0;
-	while (i < philo->nb_philosophers)
+	tmp = philo;
+	while (i < philo->dinner->nb_philosophers)
 	{
-		if (pthread_create(&threads[i], NULL, &routine, (void *)philo) != 0)
+		if (pthread_create(&threads[i], NULL, &routine, (void *)tmp) != 0)
 		{
 			perror("pthread creation error");
-			exit(EXIT_FAILURE);
+			return (1);
 		}
-		else
-			ft_putstr_fd("Thread successfully created!\n", 1);
-		if (philo->next)
-			philo = philo->next;
+		if (tmp->next)
+			tmp = tmp->next;
 		i++;
 	}
 	return (0);
+}
+
+static bool	join_monitor_thread(pthread_t monitor)
+{
+	if (pthread_join(monitor, NULL) != 0)
+	{
+		perror("join monitor error");
+		return (false);
+	}
+	return (true);
 }
 
 int	join_thread(pthread_t *threads, int nb_philo)
@@ -90,17 +108,14 @@ int	join_thread(pthread_t *threads, int nb_philo)
 		if (pthread_join(threads[i], NULL) != 0)
 		{
 			perror("join error");
-			ft_putstr_fd("pthread join failed\n", 2);
-			exit(EXIT_FAILURE);
+			return (1);
 		}
-		else
-			ft_putstr_fd("Thread successfully joined!\n", 1);
 		i++;
 	}
 	return (0);
 }
 
-void	destroy_mutex(pthread_mutex_t **fork, int nb_philo)
+int	destroy_mutex(pthread_mutex_t **fork, int nb_philo)
 {
 	int	i;
 
@@ -110,25 +125,35 @@ void	destroy_mutex(pthread_mutex_t **fork, int nb_philo)
 		if (pthread_mutex_destroy(fork[i]) != 0)
 		{
 			perror("mutex destroy error");
-			exit(EXIT_FAILURE);
+			return (1);
 		}
 		free(fork[i]);
 		i++;
 	}
 	free(fork);
+	return (0);
 }
 
-int	ft_threads(t_philo *philo, pthread_mutex_t **fork)
+int	ft_philo(t_dinner *dinner, t_philo *philo)
 {
 	pthread_t	*threads;
+	pthread_t	monitor;
+	pthread_mutex_t **fork;
 
-	threads = malloc(sizeof(pthread_t) * philo->nb_philosophers);
+	threads = malloc(sizeof(pthread_t) * dinner->nb_philosophers);
 	if (!threads)
-		print_error("error allocation threads");
-	give_fork(philo, fork);
-	create_thread(philo, threads);
-	join_thread(threads, philo->nb_philosophers);
-	destroy_mutex(fork, philo->nb_philosophers);
-	free_all(philo, threads);
-	exit(EXIT_SUCCESS);
+		return (ft_putstr_fd("error allocation threads", 2), 1);
+	if (!ft_alloc_mutex(dinner, &fork))
+		return (free_threads_fork(threads, NULL), 1);
+	give_fork(philo, fork, dinner->nb_philosophers);
+	if (create_thread(philo, threads) == 1)
+		return (free_threads_fork(threads, fork), 1);
+	if (!create_monitor_thread(&monitor, philo))
+		return (free_threads_fork(threads, fork), 1);
+	if (join_thread(threads, dinner->nb_philosophers) == 1)
+		return (free_threads_fork(threads, fork), 1);
+	if (!join_monitor_thread(monitor))
+		return (free_threads_fork(threads, fork), 1);
+	free_threads_fork(threads, fork);
+	return (0);
 }
