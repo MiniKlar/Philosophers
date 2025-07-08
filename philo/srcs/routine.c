@@ -6,31 +6,47 @@
 /*   By: miniklar <miniklar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 02:19:41 by lomont            #+#    #+#             */
-/*   Updated: 2025/06/30 18:08:27 by miniklar         ###   ########.fr       */
+/*   Updated: 2025/07/08 21:30:16 by miniklar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-unsigned long long	get_time(void)
-{
-	struct timeval	time;
-
-	if (gettimeofday(&time, NULL) != 0)
-		exit(EXIT_FAILURE);
-	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
-}
-
 void	*routine(void *arg)
 {
-	t_philo	philo;
-	unsigned long long	time;
+	t_philo	*philo;
+	int		i;
 
-	philo = *(t_philo *)arg;
-	(void)philo;
-	time = get_time();
-	printf("Time = %lld\n", time);
-	sleep(3);
-	ft_putstr_fd("Ending\n", 1);
-	return (0);
+	i = 0;
+	philo = (t_philo *)arg;
+	pthread_mutex_lock(philo->die_time);
+	philo->philo_die_time = get_time() + philo->dinner->time_to_die;
+	pthread_mutex_unlock(philo->die_time);
+	if (philo->index_philo % 2 == 0)
+	{
+		usleep(10000);
+		pthread_mutex_lock(philo->die_time);
+		philo->philo_die_time = get_time() + philo->dinner->time_to_die;
+		pthread_mutex_unlock(philo->die_time);
+	}
+	while (1)
+	{
+		if (philo->dinner->is_dead)
+			break;
+		if (pthread_mutex_lock(philo->left_fork) == 0)
+			print_message(get_time(), philo, 1);
+		if (pthread_mutex_lock(philo->right_fork) == 0)
+			print_message(get_time(), philo, 1);
+		print_message(get_time(), philo, 2);
+		pthread_mutex_lock(philo->die_time);
+		philo->philo_die_time = get_time() + philo->dinner->time_to_die;
+		pthread_mutex_unlock(philo->die_time);
+		usleep(philo->dinner->time_to_eat * 1000);
+		pthread_mutex_unlock(philo->right_fork);
+		pthread_mutex_unlock(philo->left_fork);
+		print_message(get_time(), philo, 3);
+		usleep(philo->dinner->time_to_sleep * 1000);
+		i++;
+	}
+	return (NULL);
 }
