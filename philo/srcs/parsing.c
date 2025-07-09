@@ -6,7 +6,7 @@
 /*   By: miniklar <miniklar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 19:37:15 by lomont            #+#    #+#             */
-/*   Updated: 2025/07/02 02:27:12 by miniklar         ###   ########.fr       */
+/*   Updated: 2025/07/09 22:00:57 by miniklar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ static bool	check_is_only_digit(char *str)
 	i = 0;
 	while (str[i])
 	{
-		if (!ft_isdigit(str[i]) || (!ft_isdigit(str[i]) && str[0] != '+' && str[0] != '-'))
+		if (!ft_isdigit(str[i])
+			|| (!ft_isdigit(str[i]) && str[0] != '+' && str[0] != '-'))
 			return (false);
 		i++;
 	}
@@ -37,12 +38,14 @@ bool	check_parsing(int argc, char **argv)
 		n = ft_atol(argv[i]);
 		if (!check_is_only_digit(argv[i]))
 		{
-			ft_putstr_fd("One or more arguments are not only composed of digits\n", 2);
+			ft_putstr_fd("One or more arguments ", 2);
+			ft_putstr_fd("are not only composed of digits\n", 2);
 			return (false);
 		}
-		if (n < 0 || n > INT_MAX)
+		if (n < 0 || n > INT_MAX || (i == 1 && n == 0))
 		{
-			ft_putstr_fd("One or more arguments are not within 0 & INT_MAX\n", 2);
+			ft_putstr_fd("One or more arguments ", 2);
+			ft_putstr_fd("are not within 0 & INT_MAX\n", 2);
 			return (false);
 		}
 		i++;
