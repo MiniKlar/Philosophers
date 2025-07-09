@@ -6,7 +6,7 @@
 /*   By: miniklar <miniklar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 15:02:38 by miniklar          #+#    #+#             */
-/*   Updated: 2025/07/08 19:44:04 by miniklar         ###   ########.fr       */
+/*   Updated: 2025/07/08 22:14:39 by miniklar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ void	free_philo(t_dinner *dinner, t_philo *philo)
 	if (dinner)
 	{
 		pthread_mutex_destroy(dinner->m_print);
+		pthread_mutex_destroy(dinner->check);
+		free(dinner->check);
 		free(dinner->m_print);
 		free(dinner);
 	}
