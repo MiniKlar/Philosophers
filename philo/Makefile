@@ -1,22 +1,26 @@
 NAME = philo
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -pthread -I ./includes
+CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g -pthread -I ./includes
 # -fsanitize=thread data race
 # -fsanitize=address leaks
 
 RM = rm -f
 
 SRC = ./srcs/main.c \
-	./srcs/utils.c \
 	./srcs/parsing.c \
 	./srcs/threads.c \
 	./srcs/routine.c \
 	./srcs/struct.c \
 	./srcs/free.c \
 	./srcs/monitoring.c \
-	./srcs/ft_lltoa.c \
-	./srcs/ft_itoa.c \
+	./srcs/create_threads.c \
+	./srcs/join_threads.c \
+	./srcs/utils/utils.c \
+	./srcs/utils/ft_lltoa.c \
+	./srcs/utils/ft_itoa.c \
+	./srcs/utils/ft_atol.c \
+	./srcs/utils/ft_isdigit.c \
 
 OBJ = $(SRC:.c=.o)
 
