@@ -6,19 +6,11 @@
 /*   By: miniklar <miniklar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 06:03:56 by lomont            #+#    #+#             */
-/*   Updated: 2025/07/08 10:25:01 by miniklar         ###   ########.fr       */
+/*   Updated: 2025/07/09 18:17:28 by miniklar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-/*
-argv[1] = number of philosophers
-argv[2] = time to die
-argv[3] = time to eat
-argv[4] = time to sleep
-argv[5] = number of times each philosophers must eat
-*/
 
 int	main(int argc, char **argv)
 {
